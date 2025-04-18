@@ -1,4 +1,4 @@
-import { boolean, date, datetime, decimal, float, int, mysqlEnum, mysqlTable, primaryKey, text, time, timestamp, varchar } from "drizzle-orm/mysql-core";
+import { boolean, date, datetime, decimal, float, int, mysqlEnum, mysqlTable, primaryKey, text, time, timestamp, unique, varchar, year } from "drizzle-orm/mysql-core";
 
 export const USER_DETAILS = mysqlTable('user_details', {
     id: int('id').notNull().primaryKey(),
@@ -13,28 +13,80 @@ export const USER_DETAILS = mysqlTable('user_details', {
     university: varchar('university', { length: 50 }).notNull(),
     citizenship: varchar('citizenship', { length: 20 }).notNull()
 });
-export const USER=mysqlTable('user',{
-    id: int('id').notNull().primaryKey().autoincrement(),
-    username: varchar('username', { length: 255 }).notNull(),
-    birthDate: date('birthDate').notNull(),
-    password:varchar('password',{length:150}).default(null),
-    gender:varchar('gender',{length:150}).default(null)
-})
+// export const USER=mysqlTable('user',{
+//     id: int('id').notNull().primaryKey().autoincrement(),
+//     username: varchar('username', { length: 255 }).notNull(),
+//     birthDate: date('birthDate').notNull(),
+//     password:varchar('password',{length:150}).default(null),
+//     gender:varchar('gender',{length:150}).default(null)
+// })
+
+// Existing USER table - Extended
+export const USER = mysqlTable('user', {
+  id: int('id').notNull().primaryKey().autoincrement(),
+  username: varchar('username', { length: 255 }).notNull(),
+  birthDate: date('birthDate').notNull(),
+  gender: varchar('gender', { length: 150 }).default(null),
+  password: varchar('password', { length: 150 }).default(null),
+
+  // New fields
+  phone: varchar('phone', { length: 20 }).default(null),
+  isPhoneVerified: boolean('is_phone_verified').default(false),
+
+  email: varchar('email', { length: 255 }).default(null),
+  isEmailVerified: boolean('is_email_verified').default(false),
+
+  profileImageUrl: varchar('profile_image_url', { length: 500 }).default(null),
+
+  country: varchar('country', { length: 150 }).default(null),
+  state: varchar('state', { length: 150 }).default(null),
+  city: varchar('city', { length: 150 }).default(null),
+
+  religion: varchar('religion', { length: 150 }).default(null),
+  caste: varchar('caste', { length: 150 }).default(null),
+
+  height: decimal('height', { precision: 5, scale: 2 }).default(null), // e.g., 170.00 cm
+  weight: decimal('weight', { precision: 5, scale: 2 }).default(null), // e.g., 65.00 kg
+
+  income: varchar('income', { length: 100 }).default(null),
+
+  isProfileVerified: boolean('is_profile_verified').default(false),
+  isProfileComplete: boolean('is_profile_complete').default(false), // check during update
+});
+
+export const USER_EDUCATION = mysqlTable('user_education', {
+  id: int('id').notNull().primaryKey().autoincrement(),
+  user_id: int('user_id').notNull(),
+  degree: varchar('degree', { length: 255 }).notNull(),
+  graduationYear: year('graduation_year').default(null)
+});
+
+export const USER_JOB = mysqlTable('user_job', {
+  id: int('id').notNull().primaryKey().autoincrement(),
+  user_id: int('user_id').notNull(),
+  jobTitle: varchar('job_title', { length: 255 }).notNull(),
+  company: varchar('company', { length: 255 }).default(null),
+  location: varchar('location', { length: 255 }).default(null)
+});
+
 export const USER_LANGUAGES = mysqlTable('user_languages', {
     id: int('id').notNull().primaryKey(),
     user_id: int('user_id').notNull(),
     language_id: int('language_id').notNull(),
     created_at: timestamp('created_at').notNull().defaultNow()
-});
-export const USER_OCCUPATION = mysqlTable('user_occupation', {
-    id: int('id').notNull().primaryKey(),
-    user_id: int('user_id').notNull(),
-    place: varchar('place', { length: 255 }).notNull(),
-    empt_type: varchar('empt_type', { length: 100 }).notNull(),
-    emp_name: varchar('emp_name', { length: 255 }).default(null),
-    emp_nature: varchar('emp_nature', { length: 255 }).notNull(),
-    annual_income: int('annual_income', { length: 20 }).notNull()
-});
+}); 
+
+// export const USER_OCCUPATION = mysqlTable('user_occupation', {
+//     id: int('id').notNull().primaryKey(),
+//     user_id: int('user_id').notNull(),
+//     place: varchar('place', { length: 255 }).notNull(),
+//     empt_type: varchar('empt_type', { length: 100 }).notNull(),
+//     emp_name: varchar('emp_name', { length: 255 }).default(null),
+//     emp_nature: varchar('emp_nature', { length: 255 }).notNull(),
+//     annual_income: int('annual_income', { length: 20 }).notNull()
+// });
+
+
 export const LANGUAGES = mysqlTable('languages', {
     id: int('id').notNull().primaryKey(),
     title: varchar('title', { length: 256 }).notNull(),
@@ -65,6 +117,16 @@ export const QUIZ_SEQUENCES = mysqlTable('quiz_sequences', {
     isCompleted: boolean('isCompleted').notNull().default(false), 
     isStarted: boolean('isStarted').notNull().default(false),    
 });
+
+export const MBTI_COMPATIBILITY = mysqlTable('mbti_compatibility', {
+  id: int('id').primaryKey().autoincrement(),
+  mbtiType: varchar('mbti_type', { length: 4 }).notNull(),
+  compatibleType: varchar('compatible_type', { length: 4 }).notNull(),
+  tier: mysqlEnum('tier', ['great', 'good', 'average', 'not_ideal', 'bad']).notNull(),
+  match_order: int('match_order').notNull(),
+}, (table) => ({
+  uniqueMbtiMatch: unique().on(table.mbtiType, table.compatibleType),
+}));
 
 export const USER_PROGRESS = mysqlTable('user_progress', {
     id: int('id').primaryKey().autoincrement(),
@@ -113,6 +175,7 @@ export const COMPATIBILITY_RESULTS = mysqlTable('compatibility_results', {
     user_2_id: int('user_2_id').notNull().references(() => USER.id), 
     compatibilityScore: int('compatibility_score').default(0), 
 });
+
 export const TEST_PROGRESS  = mysqlTable('test_progress', {
     progress_id: int('progress_id').autoincrement().primaryKey(), // Auto-incrementing primary key for progress
     user_id: int('user_id').notNull().references(() => USER_DETAILS.id), // Reference to the user taking the test

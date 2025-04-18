@@ -14,7 +14,6 @@ export const ProfileBasic = React.memo(function ProfileBasic() {
     return (
         <div className="bg-gradient-to-r from-red-500 to-orange-500 flex flex-col justify-center md:px-20 md:py-8">
             <div className="relative bg-white w-full md:py-6 pb-6 md:rounded-xl flex flex-col lg:flex-row justify-evenly gap-10">
-                <ProTag textAndPadding="text-xl md:p-3 p-1" bgAndTextColor="bg-neutral-400 text-white max-md:top-[230px] "/>
                 <div className="flex flex-col gap-7 items-center w-full lg:w-fit">
                     <Image src="/images/deepika1.jpg" width={600} height={600} alt="Profile picture of Virat Singh" className="rounded-lg bg-cover shadow-md"/>
                     <div className="text-2xl sm:text-4xl text-neutral-800 font-bold">Deepika Sharma</div>
@@ -51,19 +50,6 @@ export const ProfileBasic = React.memo(function ProfileBasic() {
                                 <div>{obj.text2}</div>
                             </div>
                         ))}
-                    </div>
-                    <div className="flex gap-4 text-white md:text-lg text-sm text-center font-semibold">
-                        <div className="relative w-full bg-gradient-to-r from-red-500 to-orange-500 cursor-pointermd:px-3 px-1 md:py-8 py-4 rounded-xl">
-                        {/* <ProTag bgAndTextColor="bg-white text-red-500" textAndPadding="text-xs p-1" /> */}
-                            Compatibility - 82%
-                        </div>
-                        <div className="relative w-full bg-gradient-to-r from-red-500 to-orange-500 cursor-pointermd:px-3 px-1 md:py-8 py-4 rounded-xl">4/10 Common Interests
-                            {/* <ProTag textAndPadding="text-xs p-1" bgAndTextColor="bg-neutral-400 text-white"/> */}
-                        </div>
-                        <div className="relative w-full bg-gradient-to-r from-red-500 to-orange-500 cursor-pointermd:px-3 px-1 md:py-8 py-4 rounded-xl">
-                            {/* <div className="absolute top-2 right-2 rounded-lg bg-white text-red-500 text-xs p-1  font-bold">PRO</div> */}
-                            Check Horoscope
-                        </div>
                     </div>
                     </div>
                     <div className="flex gap-4 text-white md:text-xl text-sm text-center font-semibold">

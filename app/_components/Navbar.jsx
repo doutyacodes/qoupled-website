@@ -105,10 +105,10 @@ const ModernNavbar = () => {
               Tests
             </button>
             <button 
-              onClick={() => router.push('/matches')}
+              onClick={() => router.push('/my-matches')}
               className="text-white hover:text-rose-100 transition-colors"
             >
-              Matches
+              My Matches
             </button>
             <button
               onClick={openModal}
@@ -118,7 +118,9 @@ const ModernNavbar = () => {
               Add Couple
             </button>
             {user && (
-              <div className="flex items-center bg-white/10 rounded-full py-1 px-3">
+              <div className="flex items-center bg-white/10 rounded-full py-1 px-3"
+              onClick={() => router.push('/profile/my-profile')}
+              >
                 <User className="h-4 w-4 text-white mr-2" />
                 <span className="text-white text-sm font-medium">{user.username}</span>
               </div>

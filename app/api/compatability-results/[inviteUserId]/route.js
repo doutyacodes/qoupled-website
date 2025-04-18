@@ -155,6 +155,7 @@ export async function GET(req, { params }) {
   const userId = userData.userId;
   const testId = 2;
 
+  console.log("inviteUserId", inviteUserId)
   try {
     // Check if compatibility score already exists
     const existingScore = await db

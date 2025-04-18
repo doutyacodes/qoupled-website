@@ -14,6 +14,8 @@ const CompatibilityResult = () => {
   const [hasRedFlags, setHasRedFlags] = useState(false);
   const router = useRouter();
   const [inviteUserId, setInviteUserId] = useState('');
+
+  console.log("inviteUserId", inviteUserId)
   
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -21,7 +23,9 @@ const CompatibilityResult = () => {
       
       if (searchParams.has('userId')) {        
         const encryptedUserId = searchParams.get('userId');
+        console.log("encryptedUserId", encryptedUserId)
         const decryptedUserId = decryptText(encryptedUserId);
+        console.log("decryptedUserId", decryptedUserId)
 
         if (decryptedUserId) {
             setInviteUserId(decryptedUserId);
@@ -29,6 +33,28 @@ const CompatibilityResult = () => {
       }
     }
   }, []); 
+
+  // useEffect(() => {
+  //   if (typeof window !== 'undefined') {
+  //     const searchParams = new URLSearchParams(window.location.search);
+      
+  //     if (searchParams.has('userId')) {        
+  //       const encryptedUserId = searchParams.get('userId');
+  //       console.log("encryptedUserId", encryptedUserId);
+        
+  //       // Decode the URL-encoded string before decryption
+  //       const decodedEncryptedUserId = decodeURIComponent(encryptedUserId);
+  //       console.log("decodedEncryptedUserId", decodedEncryptedUserId);
+        
+  //       const decryptedUserId = decryptText(decodedEncryptedUserId);
+  //       console.log("decryptedUserId", decryptedUserId);
+  
+  //       if (decryptedUserId) {
+  //         setInviteUserId(decryptedUserId);
+  //       }
+  //     }
+  //   }
+  // }, []);
 
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
