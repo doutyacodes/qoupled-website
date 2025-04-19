@@ -136,7 +136,7 @@ const InvitationsPage = () => {
                     <h1 className="text-2xl font-bold">Manage Invitations</h1>
                     </div>
                     <button
-                    onClick={() => window.location.href = '/invite'}
+                    onClick={() => window.location.href = '/my-matches'}
                     className="px-4 py-2 bg-white text-rose-600 rounded-lg hover:bg-rose-50 transition-colors duration-200 font-medium flex items-center"
                     >
                     <UserPlus className="w-5 h-5 mr-2" />

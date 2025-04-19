@@ -17,7 +17,7 @@ const ModernCompatibilityQuiz = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [showAlert, setShowAlert] = useState(false);
   const [inviteStatus, setInviteStatus] = useState(null);
-  const [showRedFlagInfo, setShowRedFlagInfo] = useState(false);
+  const [showRedFlagInfo, setShowRedFlagInfo] = useState(true);
   const router = useRouter();
   const [isAuthenticated, setIsAuthenticated] = useState(true);
   const [progress, setProgress] = useState(0);
@@ -96,7 +96,7 @@ const ModernCompatibilityQuiz = () => {
 
         const timer = setTimeout(() => {
           if (resp.data.inviteStatus === true || typeof resp.data.inviteStatus === "undefined") {
-            router.replace("/taketest");
+            router.replace("/my-matches");
           } else if (resp.data.inviteStatus === false) {
             const userIdToEncrypt = String(resp.data.inviterId);
             const encryptedUserId = encryptText(userIdToEncrypt);

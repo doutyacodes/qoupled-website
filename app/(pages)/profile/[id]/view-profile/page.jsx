@@ -435,7 +435,7 @@ export default function UserProfile() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-rose-400 to-red-500">
       <ModernNavbar />
-      <div className="container mx-auto py-8 px-4">
+      <div className="container mx-auto py-8 px-4 mt-10">
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
           {/* Main content container */}
           <div className="flex flex-col lg:flex-row justify-between gap-8 p-6 md:p-8">
