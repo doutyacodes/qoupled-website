@@ -138,6 +138,8 @@ async function fetchInviterDetails(inviteUserId) {
     .select({
       username: USER.username,
       gender: USER.gender,
+      imageUrl: USER.profileImageUrl,
+      country: USER.country
     })
     .from(USER)
     .where(eq(USER.id, inviteUserId))
@@ -181,6 +183,8 @@ export async function GET(req, { params }) {
 
     const user1Answers = await fetchAnswers(userId, testId);
     const user2Answers = await fetchAnswers(inviteUserId, testId);
+
+    console.log(user1Answers.length, user2Answers.length)
 
     if (user1Answers.length !== user2Answers.length || user1Answers.length === 0) {
       return NextResponse.json({ message: 'Error fetching answers or answers count mismatch' }, { status: 400 });

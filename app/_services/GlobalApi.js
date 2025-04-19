@@ -242,6 +242,17 @@ const GetSavedProfiles = (token) => {
   });
 };
 
+const SendConnectionRequest = (receiverId, token) => {
+  return axios.post('/api/connections/send', 
+      { receiverId },
+      {
+          headers: {
+              'Authorization': `Bearer ${token}`
+          }
+      }
+  );
+}
+
 export default {
   CreateNewUser,
   GetUserData,
@@ -270,4 +281,5 @@ export default {
   SearchUsers,
   ToggleFavoriteProfile,
   GetSavedProfiles,
+  SendConnectionRequest,
 };

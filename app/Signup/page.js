@@ -18,15 +18,19 @@ const Signup = () => {
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const searchParams = new URLSearchParams(window.location.search);
-      if (searchParams.has('userId')) {
-        const encryptedUserIdFromUrl = searchParams.get('userId');
-        if (encryptedUserIdFromUrl) {
-          const decryptedUserId = decryptText(encryptedUserIdFromUrl);
-          setInviteUserId(decryptedUserId);
+      
+      if (searchParams.has('userId')) {        
+        const encryptedUserId = searchParams.get('userId');
+        console.log("encryptedUserId", encryptedUserId)
+        const decryptedUserId = decryptText(encryptedUserId);
+        console.log("decryptedUserId", decryptedUserId)
+
+        if (decryptedUserId) {
+            setInviteUserId(decryptedUserId);
         }
       }
     }
-  }, []);
+  }, []); 
 
   const {
     register,

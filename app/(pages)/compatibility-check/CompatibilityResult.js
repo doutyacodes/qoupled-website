@@ -14,6 +14,10 @@ const CompatibilityResult = () => {
   const [hasRedFlags, setHasRedFlags] = useState(false);
   const router = useRouter();
   const [inviteUserId, setInviteUserId] = useState('');
+  const BASE_IMAGE_URL = 'https://wowfy.in/wowfy_app_codebase/photos/';
+
+  const [isRequestSending, setIsRequestSending] = useState(false);
+  const [requestStatus, setRequestStatus] = useState(null);
 
   console.log("inviteUserId", inviteUserId)
   
@@ -33,28 +37,6 @@ const CompatibilityResult = () => {
       }
     }
   }, []); 
-
-  // useEffect(() => {
-  //   if (typeof window !== 'undefined') {
-  //     const searchParams = new URLSearchParams(window.location.search);
-      
-  //     if (searchParams.has('userId')) {        
-  //       const encryptedUserId = searchParams.get('userId');
-  //       console.log("encryptedUserId", encryptedUserId);
-        
-  //       // Decode the URL-encoded string before decryption
-  //       const decodedEncryptedUserId = decodeURIComponent(encryptedUserId);
-  //       console.log("decodedEncryptedUserId", decodedEncryptedUserId);
-        
-  //       const decryptedUserId = decryptText(decodedEncryptedUserId);
-  //       console.log("decryptedUserId", decryptedUserId);
-  
-  //       if (decryptedUserId) {
-  //         setInviteUserId(decryptedUserId);
-  //       }
-  //     }
-  //   }
-  // }, []);
 
   const token = typeof window !== "undefined" ? localStorage.getItem("token") : null;
 
@@ -89,10 +71,12 @@ const CompatibilityResult = () => {
   }, [inviteUserId]);
 
   // Determine the image URL based on inviter's gender
-  const inviterImageUrl = inviterDetails.gender === 'Male'
-    ? "https://media.istockphoto.com/id/587805156/vector/profile-picture-vector-illustration.jpg?s=1024x1024&w=is&k=20&c=N14PaYcMX9dfjIQx-gOrJcAUGyYRZ0Ohkbj5lH-GkQs=" 
-    : "https://media.istockphoto.com/id/2060009001/vector/avatar-user-profile-person-icon-profile-picture-for-social-media-profiles-icons-screensavers.jpg?s=1024x1024&w=is&k=20&c=f8-AK6NbqIXHOCGHkZCm_5rqm8t4H7ij9Soiu1OZNdk=";
-
+  const inviterImageUrl = inviterDetails.imageUrl
+    ? `${BASE_IMAGE_URL}${inviterDetails.imageUrl}`
+    : inviterDetails.gender === 'Male'
+      ? "https://media.istockphoto.com/id/587805156/vector/profile-picture-vector-illustration.jpg?s=1024x1024&w=is&k=20&c=N14PaYcMX9dfjIQx-gOrJcAUGyYRZ0Ohkbj5lH-GkQs="
+      : "https://media.istockphoto.com/id/2060009001/vector/avatar-user-profile-person-icon-profile-picture-for-social-media-profiles-icons-screensavers.jpg?s=1024x1024&w=is&k=20&c=f8-AK6NbqIXHOCGHkZCm_5rqm8t4H7ij9Soiu1OZNdk=";
+      
   // Calculate the percentage fill for the compatibility ring
   const circleFill = compatibilityScore ? compatibilityScore : 0;
   const circleCircumference = 2 * Math.PI * 70; // radius 70
@@ -115,6 +99,27 @@ const CompatibilityResult = () => {
   const handleFollow = () => {
     // Add your follow functionality here
     toast.success("Follow request sent!");
+  };
+
+  const handleSendRequest = async () => {
+    try {
+      setIsRequestSending(true);
+      const response = await GlobalApi.SendConnectionRequest(inviteUserId, token);
+      
+      if (response.status === 201) {
+        setRequestStatus('sent');
+        toast.success("Connection request sent successfully!");
+      } else if (response.status === 409) {
+        // Request already exists
+        setRequestStatus(response.data.status);
+        toast.info(`Connection already ${response.data.status}`);
+      }
+    } catch (error) {
+      console.error("Error sending connection request:", error);
+      toast.error("Failed to send connection request. Please try again.");
+    } finally {
+      setIsRequestSending(false);
+    }
   };
 
   if (isLoading) {
@@ -166,7 +171,7 @@ const CompatibilityResult = () => {
                     {inviterDetails.username ? inviterDetails.username.toUpperCase() : 'Your Match'}
                   </h2>
                   <p className="text-gray-500 text-sm">
-                    {inviterDetails.location || 'Location not shared'}
+                    {inviterDetails.country || 'Location not shared'}
                   </p>
                 </div>
 
@@ -235,24 +240,61 @@ const CompatibilityResult = () => {
               
               {/* Follow Button (only if compatibility >= 60%) */}
               {compatibilityScore >= 60 && (
-                <div className="mt-8">
+              <div className="mt-8">
+                {requestStatus === 'sent' || requestStatus === 'pending' ? (
                   <button
-                    onClick={handleFollow}
+                    disabled
+                    className="w-full flex items-center justify-center gap-2 bg-gray-400 text-white py-3 px-4 rounded-xl transition-all shadow-md cursor-not-allowed"
+                  >
+                    <span>Request Sent</span>
+                  </button>
+                ) : requestStatus === 'accepted' ? (
+                  <button
+                    disabled
+                    className="w-full flex items-center justify-center gap-2 bg-green-500 text-white py-3 px-4 rounded-xl transition-all shadow-md cursor-not-allowed"
+                  >
+                    <span>Connected</span>
+                  </button>
+                ) : (
+                  <button
+                    onClick={handleSendRequest}
+                    disabled={isRequestSending}
                     className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-rose-500 to-red-600 text-white py-3 px-4 rounded-xl hover:opacity-90 transition-all shadow-md"
                   >
-                    <UserPlus className="w-5 h-5" />
-                    <span>Follow</span>
+                    {isRequestSending ? (
+                      <Loader2 className="w-5 h-5 animate-spin" />
+                    ) : (
+                      <UserPlus className="w-5 h-5" />
+                    )}
+                    <span>Send Connection Request</span>
                   </button>
-                </div>
-              )}
-
+                )}
+              </div>
+            )}
               {/* Message about compatibility threshold */}
               <div className="mt-8">
                 <p className="text-sm text-gray-600 text-center">
                   {compatibilityScore >= 60 
-                    ? "You can now follow this user and connect!" 
-                    : "A compatibility score of at least 60% is needed to follow this user."}
+                    ? "You can now send a connection request to this user!" 
+                    : "A compatibility score of at least 60% is needed to send a connection request."}
                 </p>
+                
+                {/* Add navigation buttons */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mt-6">
+                  <button 
+                    onClick={() => router.push('/my-matches')}
+                    className="flex items-center justify-center gap-2 bg-rose-100 text-rose-700 py-3 px-4 rounded-xl hover:bg-rose-200 transition-all"
+                  >
+                    <span>View More Matches</span>
+                  </button>
+                  
+                  <button
+                    onClick={() => router.push('/connections')}
+                    className="flex items-center justify-center gap-2 bg-gray-100 text-gray-700 py-3 px-4 rounded-xl hover:bg-gray-200 transition-all"
+                  >
+                    <span>My Connections</span>
+                  </button>
+                </div>
               </div>
             </div>
 

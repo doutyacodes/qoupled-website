@@ -54,17 +54,29 @@ export const USER = mysqlTable('user', {
   isProfileComplete: boolean('is_profile_complete').default(false), // check during update
 });
 
+export const EDUCATION_LEVELS = mysqlTable('education_levels', {
+  id: int('id').notNull().primaryKey().autoincrement(),
+  levelName: varchar('level_name', { length: 255 }).notNull().unique(),
+});
+
 export const USER_EDUCATION = mysqlTable('user_education', {
   id: int('id').notNull().primaryKey().autoincrement(),
   user_id: int('user_id').notNull(),
+  education_level_id: int('education_level_id').notNull().references(() => EDUCATION_LEVELS.id),
   degree: varchar('degree', { length: 255 }).notNull(),
   graduationYear: year('graduation_year').default(null)
+});
+
+export const JOB_TITLES = mysqlTable('job_titles', {
+  id: int('id').notNull().primaryKey().autoincrement(),
+  title: varchar('title', { length: 150 }).notNull().unique(),
 });
 
 export const USER_JOB = mysqlTable('user_job', {
   id: int('id').notNull().primaryKey().autoincrement(),
   user_id: int('user_id').notNull(),
-  jobTitle: varchar('job_title', { length: 255 }).notNull(),
+  job_title_id: int('job_title_id').notNull().references(() => JOB_TITLES.id),
+  // jobTitle: varchar('job_title', { length: 255 }).notNull(),
   company: varchar('company', { length: 255 }).default(null),
   location: varchar('location', { length: 255 }).default(null)
 });
@@ -86,28 +98,31 @@ export const USER_LANGUAGES = mysqlTable('user_languages', {
 //     annual_income: int('annual_income', { length: 20 }).notNull()
 // });
 
-
 export const LANGUAGES = mysqlTable('languages', {
     id: int('id').notNull().primaryKey(),
     title: varchar('title', { length: 256 }).notNull(),
     created_at: timestamp('created_at').notNull().defaultNow()
 });
+
 export const ACCOUNT_CREATOR= mysqlTable('account_creator',{
     id:int('id').autoincrement().notNull().primaryKey(),
     title:varchar('title',{length:200}).notNull(),
     created_date: datetime('created_at').notNull(),
 });
+
 export const ANALYTICS_QUESTION = mysqlTable('analytics_question', {
     id: int('id').primaryKey().autoincrement(),
     question_text: varchar('question_text', { length: 300 }).notNull(),
     quiz_id: int('quiz_id').notNull(),
 });
+
 export const OPTIONS = mysqlTable('options', {
     id: int('id').primaryKey().autoincrement(),
     option_text: varchar('option_text', { length: 300 }).notNull(),
     analytic_id: int('analytic_id').notNull(),
     question_id: int('question_id').notNull(),
 });
+
 export const QUIZ_SEQUENCES = mysqlTable('quiz_sequences', {
     id: int('id').primaryKey().autoincrement(),
     type_sequence: text('type_sequence').notNull().default(''),
@@ -193,6 +208,7 @@ export const TEST_PROGRESS  = mysqlTable('test_progress', {
     compatibility_checked: boolean('compatibility_checked').notNull().default(false), // Whether compatibility was checked
     created_at: timestamp('created_at').defaultNow(),
   });
+
   export const COUPLES = mysqlTable('couples', {
     id: int('id').autoincrement().primaryKey(),
     user_id: int('user_id').notNull().references(() => USER.id), // Reference to the user who sent the request
@@ -218,4 +234,13 @@ export const PEOPLE_PAIR = mysqlTable('people_pair', {
     return {
       userAnswerUnique: unique('user_answer_unique').on(table.user_id, table.answer_id)
     }
+  });
+
+  export const CONNECTIONS = mysqlTable("connections", {
+    connectionId: int("connection_id").primaryKey().autoincrement(),
+    senderId: int("sender_id").notNull().references(() => USER.id),
+    receiverId: int("receiver_id").notNull().references(() => USER.id),
+    status: mysqlEnum("status", ["pending", "accepted", "rejected", "blocked"]).default("pending"),
+    requestedAt: timestamp("requested_at").defaultNow(),
+    respondedAt: timestamp("responded_at"),
   });

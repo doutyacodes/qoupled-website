@@ -30,19 +30,36 @@ function Page() {
         }
     }, [status]);
 
+    // useEffect(() => {
+    //     if (typeof window !== 'undefined') {
+    //         const searchParams = new URLSearchParams(window.location.search);
+            
+    //         if (searchParams.has('userId')) {
+    //             const encryptedUserId = searchParams.get('userId');
+    //             const decryptedUserId = decryptText(encryptedUserId);
+    //             if (decryptedUserId) {
+    //                 setInviteUserId(decryptedUserId);
+    //             }
+    //         }
+    //     }
+    // }, []);
+
     useEffect(() => {
         if (typeof window !== 'undefined') {
-            const searchParams = new URLSearchParams(window.location.search);
-            
-            if (searchParams.has('userId')) {
-                const encryptedUserId = searchParams.get('userId');
-                const decryptedUserId = decryptText(encryptedUserId);
-                if (decryptedUserId) {
-                    setInviteUserId(decryptedUserId);
-                }
+          const searchParams = new URLSearchParams(window.location.search);
+          
+          if (searchParams.has('userId')) {        
+            const encryptedUserId = searchParams.get('userId');
+            console.log("encryptedUserId", encryptedUserId)
+            const decryptedUserId = decryptText(encryptedUserId);
+            console.log("decryptedUserId", decryptedUserId)
+    
+            if (decryptedUserId) {
+                setInviteUserId(decryptedUserId);
             }
+          }
         }
-    }, []);
+      }, []); 
 
     useEffect(() => {
         const checkUserAndQuizStatus = async () => {

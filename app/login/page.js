@@ -15,19 +15,23 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [navigateURL, setNavigateURL] = useState('');
 
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const searchParams = new URLSearchParams(window.location.search);
       
-      if (searchParams.has('userId')) {
+      if (searchParams.has('userId')) {        
         const encryptedUserId = searchParams.get('userId');
-        if (encryptedUserId) {
-          const decryptedUserId = decryptText(decodeURIComponent(encryptedUserId));
-          setInviteUserId(decryptedUserId);
+        console.log("encryptedUserId", encryptedUserId)
+        const decryptedUserId = decryptText(encryptedUserId);
+        console.log("decryptedUserId", decryptedUserId)
+
+        if (decryptedUserId) {
+            setInviteUserId(decryptedUserId);
         }
       }
     }
-  }, []);
+  }, []); 
 
   const {
     register,
